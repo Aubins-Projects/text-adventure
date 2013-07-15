@@ -139,8 +139,6 @@ def coordinates(direction):
   global x
   global y
   global location
-  print(x)
-  print(y)
   sav_x=x
   sav_y=y
   if direction == "east":
@@ -151,8 +149,6 @@ def coordinates(direction):
      y=y+1
   elif direction == "south":
      y=y-1
-  print(x)
-  print(y)
   if x == 10 and y==10 :
      location = bedroom
   elif x== 11 and y ==10:
@@ -172,13 +168,13 @@ def look_command(holder):
   if holder[0]=="look":
     if holder[1] == "east":
       print(location.east)
-    if holder[1] == "west":
+    elif holder[1] == "west":
       print(location.west)
-    if holder[1] == "south":
+    elif holder[1] == "south":
       print(location.south)
-    if holder[1] == "north":
+    elif holder[1] == "north":
       print(location.north)
-    if holder[1]== "around":
+    elif holder[1]== "around":
       room_contents_look(location)
       if len(location.baddies)>0:
         print(location.baddies[0].name)
@@ -189,10 +185,11 @@ def about_command(holder):
   if holder[0]=="about":
     ff=0
     f=0
-    if holder[1]==location.baddies[0].name:
-      print(location.baddies[0].name)
-      print(location.baddies[0].health)
-      breaker=1
+    if len(location.baddies)>0:
+      if holder[1]==location.baddies[0].name:
+        print(location.baddies[0].name)
+        print(location.baddies[0].health)
+        breaker=1
     breaker=0
     for x in range(0,len(user.contents)):
       for x in range(len(holder)):
@@ -291,17 +288,29 @@ def bag_command(holder):
       print("a(n) "+str(user.contents[i]))
       i=1+i
 
-
-
+def drop_command(holder):
+   if holder[0]=="drop":
+     hholder=""
+     i=1
+     for x in range(1,len(holder)):
+       hholder=hholder+ str(holder[i])
+       i=i+1
+       print(hholder)
+     if hholder in user.contents:
+       user.contents.remove(hholder)
+       location.contents.append(hholder)
+     else:
+       print("found nothing to drop")
 
 def what_you_do(holder):
   global location
-  look_command(holder)
+
+#  drop_command(holder)
   try:  
 
     grab_command(holder)
     bag_command(holder)
-
+    look_command(holder)
     if holder[0]=="go":
       coordinates(holder[1])
   except:
@@ -418,10 +427,10 @@ lair.baddies.append(blob)
 
 #this is your player
 
-#namechecker()
+namechecker()
 #initial(name)
-name="aubin"
-user=player(name,"sdf","asdf", 100)
+#name="aubin"
+user=player(name,100,"male", "warrior")
 
 
 location= bedroom
