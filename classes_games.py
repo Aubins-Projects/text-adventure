@@ -196,52 +196,15 @@ def about_command(holder):
       print("in this room")
       print(location.contents[location.contents.index(otherholder)].description) 
       
-
-
-
-
 def grab_command(holder):
-  check=0
   if holder[0]=="grab":
-    print("************************** \n")
-    ii=0
-#this is where we split the words up and take the seperate words
-    for x in range(len(location.contents)):
-       otherhold=str(location.contents[ii]).split()
-       checker=len(otherhold)
-#This is the comparison of each seperate word
-       f=0
-       for x in range(len(otherhold)):
-         if holder[f+1]== otherhold[f]:
-           f=f+1
-         else:
-           checker=checker-1
-###################################################################################################
-#The input statement is seperated from above and will now make a print statement,append,and delete
-##################################################################################################
-       if checker==len(otherhold):
-         printthis=("You just picked up: ")
-         q=0
-#This gives you the multiple word object printed out
-         for x in range(len(otherhold)):
-           printthis=printthis+" "+str(otherhold[q])
-           check=1
-           q=q+1
-         print(printthis)         
-         print(location.contents[ii].description)
-#This is where you add the item then delete it from the room
-         user.contents.append(location.contents[ii])
-         del location.contents[ii]
-#We break out if we have added an item with these two if statements
-         if check==1:
-           break
-       if check==1:
-         break
-       else:
-         ii=ii+1
-         check=0
-    if check==0:
-      print("There is nothing like that here.\n")
+    holder.remove("grab")
+    otherholder=' '.join(holder) 
+    if otherholder in location.contents:
+      user.contents.append(location.contents[location.contents.index(otherholder)])
+      location.contents.remove(otherholder)
+      print(user.contents[user.contents.index(otherholder)].description)
+
 
 def bag_command(holder):
   if holder[0]=="bag":
@@ -268,16 +231,13 @@ def drop_command(holder):
 def what_you_do(holder):
   global location
 
-#  drop_command(holder)
-  try:  
+#  drop_command(holder)  
 
-    grab_command(holder)
-    bag_command(holder)
-    look_command(holder)
-    if holder[0]=="go":
+  grab_command(holder)
+  bag_command(holder)
+  look_command(holder)
+  if holder[0]=="go":
       coordinates(holder[1])
-  except:
-    error=1
   about_command(holder)
   
 
