@@ -216,22 +216,18 @@ def bag_command(holder):
 
 def drop_command(holder):
    if holder[0]=="drop":
-     hholder=""
-     i=1
-     for x in range(1,len(holder)):
-       hholder=hholder+ str(holder[i])
-       i=i+1
-       print(hholder)
-     if hholder in user.contents:
-       user.contents.remove(hholder)
-       location.contents.append(hholder)
-     else:
-       print("found nothing to drop")
+    holder.remove("drop")
+    otherholder=' '.join(holder) 
+    if otherholder in user.contents:
+      location.contents.append(user.contents[user.contents.index(otherholder)])
+      user.contents.remove(otherholder)
+      print("you just dropped "+ otherholder + " in the " +str(location))
+
 
 def what_you_do(holder):
   global location
 
-#  drop_command(holder)  
+  drop_command(holder)  
 
   grab_command(holder)
   bag_command(holder)
