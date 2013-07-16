@@ -131,6 +131,7 @@ def gen_death(how_they_died):
   gen_death= (name + ", because you decided to "+ how_they_died +" you have incured the wrath of Om' Alde Ashko and he has smited your SOUL!")
   return str(gen_death)
 
+
     
 x=10
 y=10
@@ -381,24 +382,15 @@ blob=monster("blob",100,"yellow","warrior" )
 blob.contents.append(shield)
 
 
-commandlist = {}
-userlist={}
+commandlist = dict()
 
+commandlist['go']="type go and then a cardinal direction"
+commandlist['look']="type look and then a cardinal direction, or around to look around"
+commandlist['quit']="type quit and then follow the directions to quit"
+commandlist['about']="type about and then what object you want to learn about"
+commandlist['bag']="type bag to see whats in your bag"
 
-class Command:
-  def __init__(self, name, description):
-    self.name = name
-    commandlist[name] = self
-    userlist[name]= description
-  def __str__(self):
-    return str(self.name)
-
-Command("go ", "you go \"direction\" (north, south, east, west, around)")
-Command("look ", "you look \"direction\" (north, south, east, west, around)")
-Command("quit", "you quit")
-Command("about","you can learn about the object")
-
-print(userlist)
+print(commandlist)
 
 
 
