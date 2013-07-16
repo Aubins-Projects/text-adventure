@@ -180,64 +180,26 @@ def look_command(holder):
       if len(location.baddies)>0:
         print(location.baddies[0].name)
         print(location.baddies[0].health)
-        
 
 def about_command(holder):
   if holder[0]=="about":
-    ff=0
-    f=0
     if len(location.baddies)>0:
       if holder[1]==location.baddies[0].name:
         print(location.baddies[0].name)
         print(location.baddies[0].health)
-        breaker=1
-    breaker=0
-    for x in range(0,len(user.contents)):
-      for x in range(len(holder)):
-        otherholder=str(user.contents[ff]).split()
-        if len(user.contents) > 0:
-          if len(holder)> f-1:
-            if holder[1]==otherholder[0]:
-              if len(holder)==3:
-                if holder[2]==otherholder[1]:
-                  print(user.contents[ff].description)
-                  print(location.contents[ff].power)
-                  breaker=1
-                  break
-              else:
-                print(user.contents[ff].description)
-                print(location.contents[ff].power)
-                breaker=1
-                break
-      ff=ff+1
-      if breaker==1:
-        breaker=0
-        break
-    f=0
-    ff=0
-    for x in range(0,len(location.contents)):
-      for x in range(len(holder)):
-        otherholder=str(location.contents[ff]).split()
-        if len(location.contents) > 0:
-          if len(holder)> f-1:
-            if holder[1]==otherholder[0]:
-              if len(holder)==3:
-                if holder[2]==otherholder[1]:
-                  print(location.contents[ff].description)
-                  print(location.contents[ff].power)
-                  breaker=1
-                  break
-              else:
-                print(location.contents[ff].description)
-                print(location.contents[ff].power)
-                breaker=1
-                break
-      ff=ff+1
-      if breaker==1:
-        breaker=0
-        break
+    holder.remove("about")
+    otherholder=' '.join(holder) 
+    if otherholder in user.contents:
+      print("in my bag")
+      print(user.contents[user.contents.index(otherholder)].description)
+    if otherholder in location.contents:
+      print("in this room")
+      print(location.contents[location.contents.index(otherholder)].description) 
+      
 
-   
+
+
+
 def grab_command(holder):
   check=0
   if holder[0]=="grab":
@@ -341,9 +303,15 @@ class Object:
     self.value=value
     self.description=description
     self.power=power
+
   def __str__(self):
     return str(self.name)
 
+  def __eq__(self,other):
+    return self.name == other
+    
+  
+  
 class player:
   def __init__(self,name,health,gender,classs):
     self.name=name
@@ -419,9 +387,9 @@ lair.baddies.append(blob)
 
 #this is your player
 
-namechecker()
+#namechecker()
 #initial(name)
-#name="aubin"
+name="aubin"
 user=player(name,100,"male", "warrior")
 
 
