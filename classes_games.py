@@ -122,7 +122,9 @@ def scorecheck():
   for x in range(0,3):
     print(logfile.readline())
   logfile.close()
-
+  print("************************** \n")
+  print("The your score is: "+ str(points))
+  
 #These are generic deaths
 def crzy_death(how_they_died):
   crazy_death= (name + ", because you decided to "+ how_they_died +" you have incured the wrath of Om' Alde Ashko and he has smited your SOUL!")
@@ -270,6 +272,7 @@ def help_command(holder):
 def attack_command(holder):
   global response
   global lives
+  global points
   if holder[0]=="attack":
     holder.remove("attack")
     otherholder=' '.join(holder)
@@ -285,6 +288,7 @@ def attack_command(holder):
       if monsterhealth<1:
         print("you have just killed "+str(location.baddies.name))
         print("you have found :")
+        points=points+int(location.baddies.health)
         for item in location.baddies.contents:
           print(item)
           print(item.description)
@@ -296,12 +300,11 @@ def attack_command(holder):
       if yourhealth<1:
         print("you have just been killed by "+str(location.baddies.name))
         lives=lives-1
-
         if lives<0:
           response="dfhsergghj"
           break
-      print("you only have: "+str(lives)+" lives/life left")
-      break
+        print("you only have: "+str(lives)+" lives/life left")
+        break
       print(yourhealth)
       print(monsterhealth)
       
@@ -320,7 +323,8 @@ def what_you_do(holder):
   look_command(holder)
   about_command(holder)
   attack_command(holder)
-
+  if holder[0]=="points":
+    scorecheck()
 
 
 
@@ -394,9 +398,9 @@ perfect_s=Object("best shield",10000,"will mitigate some damage",30000, "shield"
 mighty_skull = Object("skull", 15000, "a giant blob skull",100)
 
 #these are the monsters in the dungeon
-blob=monster("blob",1000000,"yellow","warrior" )
+blob=monster("blob",10000,"yellow","warrior" )
 blob.contents.append(shield)
-blob.damage=1000000
+blob.damage=1000
 blob.contents.append(mighty_skull)
 
 
