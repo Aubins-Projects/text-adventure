@@ -159,10 +159,12 @@ def coordinates(direction):
      location = hallway
   elif x== 11 and y == 9:
      location = lair
+  elif x== 11 and y == 8:
+     location = keep
   else:
      x=sav_x
      y=sav_y
-##  print("this is your current X and Y "+str(x)+ ", "+str(y))
+  print("this is your current X and Y "+str(x)+ ", "+str(y))
 
 #This lets you do your action using the first part of the command and then taking the second part and doing the action
 
@@ -396,6 +398,8 @@ broken_weapon=Object("broken weapon",100,"will cause some damage",300, "weapon")
 perfect_w=Object("water tower",10000,"will mitigate some damage",30000, "weapon")
 perfect_s=Object("best shield",10000,"will mitigate some damage",30000, "shield")
 mighty_skull = Object("skull", 15000, "a giant blob skull",100)
+talon = Object("talon", 1500, "a giant dragon talon",100)
+lint = Object("skull", 100, "a piece of lint",100)
 
 #these are the monsters in the dungeon
 blob=monster("blob",10000,"yellow","warrior" )
@@ -403,10 +407,15 @@ blob.contents.append(shield)
 blob.damage=1000
 blob.contents.append(mighty_skull)
 
+dragon=monster("dragon",1000,"yellow","warrior" )
+dragon.contents.append(lint)
+dragon.damage=1000
+dragon.contents.append(talon)
 
 
 commandlist = dict()
 
+commandlist['points']="type points to get your current points"
 commandlist['go']="type go and then a cardinal direction"
 commandlist['look']="type look and then a cardinal direction, or around to look around"
 commandlist['quit']="type quit and then follow the directions to quit"
@@ -444,6 +453,11 @@ lair.description="just a long hallway"
 lair.contents.append(torch)
 lair.north=hallway
 lair.baddies=blob
+lair.south=Room("keep")
+
+keep=Room("keep")
+keep.north=lair
+keep.baddies=dragon
 
 
 #this is your player
@@ -455,7 +469,7 @@ user=player(name,100,"male", "warrior")
 user.shield=perfect_s
 user.weapon=perfect_w
 
-location= lair
+location= bedroom
 holder=list
 
 
