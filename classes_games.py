@@ -179,9 +179,9 @@ def look_command(holder):
     elif holder[1]== "around":
       room_contents_look(location)
       if location.baddies:
-        print(location.baddies.name)
-        print(location.baddies.health)
-        print(location.baddies.damage)
+          print(location.baddies.name)
+          print(location.baddies.health)
+          print(location.baddies.damage)
 
 def about_command(holder):
   if holder[0]=="about":
@@ -282,6 +282,12 @@ def attack_command(holder):
       print("you just attacked "+str(location.baddies.name))
       if monsterhealth<1:
         print("you have just killed "+str(location.baddies.name))
+        print("you have found :")
+        for item in location.baddies.contents:
+          print(item)
+          print(item.description)
+          user.contents.append(item)
+          location.baddies=None
         break
       yourhealth=yourhealth-monsterdamage
       print(str(location.baddies.name)+" just attacked you")
@@ -377,11 +383,13 @@ broken_shield=Object("broken shield",100,"will mitigate some damage",300, "shiel
 broken_weapon=Object("broken weapon",100,"will cause some damage",300, "weapon")
 perfect_w=Object("best weapon",10000,"will mitigate some damage",30000, "shield")
 perfect_s=Object("best shield",10000,"will mitigate some damage",30000, "shield")
+mighty_skull = Object("skull", 15000, "a giant blob skull",100)
 
 #these are the monsters in the dungeon
 blob=monster("blob",1000000,"yellow","warrior" )
 blob.contents.append(shield)
 blob.damage=1
+blob.contents.append(mighty_skull)
 
 
 
@@ -436,8 +444,11 @@ user.shield=perfect_s
 user.weapon=perfect_w
 
 location= lair
-
 holder=list
+
+
+
+
 while not response  == "dfhsergghj":
   response=input("Command: ")
   if response == "quit":
