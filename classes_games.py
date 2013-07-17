@@ -13,8 +13,10 @@ you can add monsters by following the format, just make sure you say where it is
 
 you can add a room by adding the rooms to the room object and the floor object
 
-What i will be adding is another dictionary maybe? for you class choice. It will be a multiplier for your health/damage or
-both.
+New idea make common, uncommon, good, and rare items that are based off a pool and the enemies can have on
+them by chance and randomness
+
+so basically three classes more :D
 
 '''
 #these are the global variables for the system
@@ -26,7 +28,8 @@ relive=1
 contents={}
 response=""
 holder=list
-
+healthmultiplier=1
+damagemultiplier=1
 
 #This is what lets you put your name in and then checks your score
 def namechecker():
@@ -40,22 +43,35 @@ def namechecker():
 #    while(1):
 #      print("Why did you break me ", name)
   else:
-    print("Welcome: "+name +"\n You are only allowed to look left, or right, and move forward. \n Good Luck! \n")
+    print("Welcome: "+name +"\nGood Luck! \n")
 
 
 
 #this is to initialize your character its commented out below for testing purposes
 def initial(name):
-  answer1=input("What is your gender?\n")
-  answer2=input("What is your class? \n")
+  global user
+  answer2=input("What is your class (warrior or fighter)? \n")
+  while not answer2 in ("warrior","fighter"):
+      answer2=input("What is your class (warrior or fighter)? \n")
   answer3=100
-  name=player(name,answer3,answer1,answer2)
+  user=player(name,answer3,answer2)
   print("\n")
-  print(name.name)
-  print(name.classs)
-  print(name.gender)
-  print(name.health)
+  print("Your name: "+str(user.name))
+  print("Your class: "+str(user.classs))
+  #class now matters
+  class_adaption(user.classs)
+  print("Your health: "+str(int(user.health)*healthmultiplier))
+  print("Your damage: "+str(int(user.damage)*damagemultiplier))
 
+def class_adaption(classs):
+  global healthmultiplier
+  global damagemultiplier
+  if classs=="warrior":
+    healthmultiplier=2
+    damagemultiplier=1
+  if classs=="fighter":
+    healthmultiplier=1
+    damagemultiplier=2
 
 
 
@@ -187,9 +203,14 @@ def loc_finder(sav_x,sav_y):
   global x
   global y
   global location
+  check =0
   for room in level1.rooms:
     if room.x==x and room.y==y:
       location= room
+      check=1
+  if check == 0:
+      x=sav_x
+      y=sav_y
   print(str(name)+", you are in the "+str(location))
 
 def map_finder(x,y):
@@ -331,10 +352,11 @@ def attack_command(holder):
     otherholder=' '.join(holder)
     neitherdead=0
     if otherholder == location.baddies:
-      yourhealth=int(user.health) + int(user.shield.power)
-      yourdamage=int(user.weapon.power)
+      yourhealth=(int(user.health) + int(user.shield.power))*int(healthmultiplier)
+      yourdamage=int(user.weapon.power)*int(damagemultiplier)
       monsterdamage=int(location.baddies.damage)
       monsterhealth=int(location.baddies.health)
+      print(yourhealth)
     while neitherdead==0:
       monsterhealth=monsterhealth-yourdamage
       print("you just attacked "+str(location.baddies.name) +" with: "+ str(user.weapon.name))
@@ -417,12 +439,12 @@ lint = Object("lint", 100, "a piece of lint",100)
 
 #This a player/your player called the user in the code  
 class player:
-  def __init__(self,name,health,gender,classs):
+  def __init__(self,name,health,classs):
     self.name=name
     self.health=health
-    self.gender=gender
     self.classs=classs
-    self.contents=list() 
+    self.contents=list()
+    self.damage=10 
     self.shield=""
     self.weapon=""
   def __str__(self):
@@ -434,14 +456,15 @@ class player:
 
 
 
-#namechecker()
-#initial(name)
+namechecker()
+initial(name)
 
 #Delete below to make your own
-name="aubin"
-user=player(name,100,"male", "warrior")
-user.shield=perfect_s
-user.weapon=perfect_w
+#name="aubin"
+
+
+
+
 
 
 
@@ -475,6 +498,9 @@ dragon.contents.append(lint)
 dragon.damage=1000
 dragon.contents.append(talon)
 
+high_wizard=monster("high wizard",random.randrange(10000000,20000000),"black","warrior")
+high_wizard.damage=random.randrange(10000000,20000000)
+
 ######################################################################################################################
 
 
@@ -494,7 +520,7 @@ class Room:
   def __str__(self):
     return str(self.name)
 ############################################################################################################
-#Add rooms Below
+#Add rooms Below don't forget them to the
 
 
 bedroom = Room("King\'s bedroom")
@@ -526,6 +552,16 @@ keep.baddies=dragon
 keep.x=11
 keep.y=8
 
+cave=Room("cave")
+cave.description="a bad aura lingers here"
+cave.baddies=high_wizard
+cave.contents.append(torch)
+cave.contents.append(perfect_w)
+cave.contents.append(perfect_s)
+cave.x=12
+cave.y=9
+
+
 #############################################################################################################
 
 class floor:
@@ -541,7 +577,7 @@ level1.rooms.append(lair)
 level1.rooms.append(bedroom)
 level1.rooms.append(hallway)
 level1.rooms.append(keep)
-
+level1.rooms.append(cave)
 
 
 #These are all of the commands in the game
@@ -558,20 +594,24 @@ commandlist['equip']="type equip [item] to equip whats in your bag"
 commandlist['unequip']="type unequip [item] to take off what you are wearing"
 commandlist['help']="type help [command] learn about command"
 commandlist['attack']="type attack [monster] to attack monster"
-print(commandlist)
 
-
+print("\ntype help for a list of all commands\n")
 
 
 #Starting location:
 location= bedroom
 
+
+
+
+user.shield=perfect_s
+user.weapon=perfect_w
 #This is really the only executed code for the whole game, its long because of the quitting functionality
 #You can only save your score if you quit properly
 #that means typing the word quit and then no
 
 while not response  == "dfhsergghj":
-  response=input("Command: ")
+  response=input("\nCommand: ")
   if response == "quit":
     ask_ok("You are about to quit, type no to quit")
     if relive==0:
@@ -581,7 +621,7 @@ while not response  == "dfhsergghj":
     mapping()
     what_you_do(holder)
   except:
-    print("type an actual command please")
+    print("type a command please")
 
 
 
