@@ -2,7 +2,7 @@ import os.path
 import string
 import random
 '''
-things to add: attack, drop (drops item in that location), better print statements for the abouts, some more monsters, and money system, maybe a store.
+things to add: attack, better print statements for the abouts, some more monsters, and money system, maybe a store.
 
 i really want to start attacking things soon. so we need to have a health system.
 
@@ -11,6 +11,7 @@ i really want to start attacking things soon. so we need to have a health system
 
 name=""
 points=0
+health=0
 dead= 0
 j=3
 relive=1
@@ -205,14 +206,45 @@ def grab_command(holder):
       location.contents.remove(otherholder)
       print(user.contents[user.contents.index(otherholder)].description)
 
+def equip_command(holder):
+  if holder[0]=="equip":
+    holder.remove("equip")
+    otherholder=' '.join(holder)     
+    if otherholder in user.contents:
+      if user.contents[user.contents.index(otherholder)].equip == "shield":
+        user.shield = user.contents[user.contents.index(otherholder)]
+        user.contents.remove(otherholder)
+        print("you just equipped a(n) "+str(otherholder)+" which "+str(user.shield.description))
+      elif user.contents[user.contents.index(otherholder)].equip == "weapon":
+        user.weapon = user.contents[user.contents.index(otherholder)]
+        user.contents.remove(otherholder)
+        print("you just equipped a(n) "+str(otherholder)+" which "+str(user.shield.description))
 
+def unequip_command(holder):
+  if holder[0]=="unequip":
+    holder.remove("unequip")
+    otherholder=' '.join(holder)     
+    if otherholder == user.weapon:
+        user.contents.append(user.weapon)
+        user.weapon=""
+        print("you just took off a(n) "+str(otherholder))
+    elif otherholder == user.shield:
+        user.contents.append(user.shield)
+        user.shield=""
+        print("you just took off a(n) "+str(otherholder))
+
+        
+      
 def bag_command(holder):
   if holder[0]=="bag":
     i=0
     print("************************** \n You currently have in your bag:")
     for x in range(len(user.contents)):
       print("a(n) "+str(user.contents[i]))
-      i=1+i
+      i=i+1
+    print("************************** \n You currently have equipped:")
+    print("a(n) "+str(user.shield)+" as your shield")
+    print("a(n) "+str(user.weapon)+" as your weapon")
 
 def drop_command(holder):
    if holder[0]=="drop":
@@ -226,9 +258,9 @@ def drop_command(holder):
 
 def what_you_do(holder):
   global location
-
+  unequip_command(holder)
   drop_command(holder)  
-
+  equip_command(holder)
   grab_command(holder)
   bag_command(holder)
   look_command(holder)
@@ -254,11 +286,12 @@ class Room:
     return str(self.name)
 
 class Object:
-  def __init__(self, name, value, description,power):
+  def __init__(self, name, value, description, power, equip="item"):
     self.name=name
     self.value=value
     self.description=description
     self.power=power
+    self.equip=equip
 
   def __str__(self):
     return str(self.name)
@@ -275,6 +308,8 @@ class player:
     self.gender=gender
     self.classs=classs
     self.contents=list() 
+    self.shield=""
+    self.weapon=""
   def __str__(self):
     return str(self.name)
 
@@ -299,6 +334,8 @@ vorpel_sword = Object("vorpel sword", 200, "a strange looking sword",1000)
 bedpan = Object("bedpan", 3, "a smelly metal bowl",2)
 torch= Object("torch", 1, "fire attatched to a stick",78)
 shield=Object("shield",200,"will mitigate some damage",300)
+broken_shield=Object("broken shield",100,"will mitigate some damage",300, "shield")
+broken_weapon=Object("broken weapon",100,"will cause some damage",300, "weapon")
 
 
 #these are the monsters in the dungeon
@@ -311,8 +348,11 @@ commandlist = dict()
 commandlist['go']="type go and then a cardinal direction"
 commandlist['look']="type look and then a cardinal direction, or around to look around"
 commandlist['quit']="type quit and then follow the directions to quit"
-commandlist['about']="type about and then what object you want to learn about"
+commandlist['about']="type about [item] and then what object you want to learn about"
 commandlist['bag']="type bag to see whats in your bag"
+commandlist['drop']="type drop [item] to drop the item from you bag"
+commandlist['equip']="type equip [item] to equip whats in your bag"
+commandlist['unequip']="type unequip [item] to take off what you are wearing"
 
 print(commandlist)
 
@@ -327,6 +367,8 @@ bedroom.contents.append(crown)
 bedroom.contents.append(scepter)
 bedroom.contents.append(vorpel_sword)
 bedroom.contents.append(bedpan)
+bedroom.contents.append(broken_shield)
+bedroom.contents.append(broken_weapon)
 
 hallway=Room("corridor")
 hallway.description="just a long hallway"
