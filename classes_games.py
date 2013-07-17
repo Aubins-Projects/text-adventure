@@ -11,7 +11,7 @@ i really want to start attacking things soon. so we need to have a health system
 
 name=""
 points=0
-health=0
+lives=3
 dead= 0
 j=3
 relive=1
@@ -268,6 +268,8 @@ def help_command(holder):
       
       
 def attack_command(holder):
+  global response
+  global lives
   if holder[0]=="attack":
     holder.remove("attack")
     otherholder=' '.join(holder)
@@ -279,7 +281,7 @@ def attack_command(holder):
       monsterhealth=int(location.baddies.health)
     while neitherdead==0:
       monsterhealth=monsterhealth-yourdamage
-      print("you just attacked "+str(location.baddies.name))
+      print("you just attacked "+str(location.baddies.name) +" with: "+ str(user.weapon.name))
       if monsterhealth<1:
         print("you have just killed "+str(location.baddies.name))
         print("you have found :")
@@ -293,7 +295,13 @@ def attack_command(holder):
       print(str(location.baddies.name)+" just attacked you")
       if yourhealth<1:
         print("you have just been killed by "+str(location.baddies.name))
-        break
+        lives=lives-1
+
+        if lives<0:
+          response="dfhsergghj"
+          break
+      print("you only have: "+str(lives)+" lives/life left")
+      break
       print(yourhealth)
       print(monsterhealth)
       
@@ -381,14 +389,14 @@ torch= Object("torch", 1, "fire attatched to a stick",78)
 shield=Object("shield",200,"will mitigate some damage",300)
 broken_shield=Object("broken shield",100,"will mitigate some damage",300, "shield")
 broken_weapon=Object("broken weapon",100,"will cause some damage",300, "weapon")
-perfect_w=Object("best weapon",10000,"will mitigate some damage",30000, "shield")
+perfect_w=Object("water tower",10000,"will mitigate some damage",30000, "weapon")
 perfect_s=Object("best shield",10000,"will mitigate some damage",30000, "shield")
 mighty_skull = Object("skull", 15000, "a giant blob skull",100)
 
 #these are the monsters in the dungeon
 blob=monster("blob",1000000,"yellow","warrior" )
 blob.contents.append(shield)
-blob.damage=1
+blob.damage=1000000
 blob.contents.append(mighty_skull)
 
 
