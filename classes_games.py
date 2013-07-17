@@ -142,6 +142,18 @@ def infunc(what_you_want_asked):
   else:
     return True
 
+def item_randomer(thelist):
+  randomnum=random.randrange(1,len(thelist.items))
+  for item in thelist.items:
+    if randomnum == item.uid:
+      return item
+      break    
+def loot_size_randomer(monster,thelist):
+  randonum=random.randrange(2,4)
+  for num in range(0,randonum):
+      monster.contents.append(item_randomer(thelist))
+      
+    
 #This is so you can check your score with the text file
 def scorecheck():
   i=0
@@ -365,10 +377,12 @@ def attack_command(holder):
         print("you have found :")
         points=points+int(location.baddies.health)
         for item in location.baddies.contents:
+          if item==None:
+            break
           print("a(n) "+str(item))
           print("\tDescription: "+str(item.description)+"\n")
           user.contents.append(item)
-          location.baddies=None
+        location.baddies=None
         break
       yourhealth=yourhealth-monsterdamage
       print(str(location.baddies.name)+" just attacked you")
@@ -404,12 +418,13 @@ def what_you_do(holder):
 
 #Your items found in game
 class Object:
-  def __init__(self, name, value, description, power, equip="item"):
+  def __init__(self, name, value, description, power,uid, equip="item"):
     self.name=name
     self.value=value
     self.description=description
     self.power=power
     self.equip=equip
+    self.uid=int(uid)
 
   def __str__(self):
     return str(self.name)
@@ -417,25 +432,87 @@ class Object:
   def __eq__(self,other):
     return self.name == other
 ###################################################################################################################
-#Add items below
 
-crown = Object("crown", 15000, "a gold crown with many jewels",10)
-scepter = Object("King's scepter", 10000, "a silver scepter",30)
-vorpel_sword = Object("vorpel sword", 200, "a strange looking sword",1000)
-bedpan = Object("bedpan", 3, "a smelly metal bowl",2)
-torch= Object("torch", 1, "fire attatched to a stick",78)
-shield=Object("shield",200,"will mitigate some damage",300)
-broken_shield=Object("broken shield",100,"will mitigate some damage",300, "shield")
-broken_weapon=Object("broken weapon",100,"will cause some damage",300, "weapon")
-perfect_w=Object("water tower",10000,"will mitigate some damage",30000, "weapon")
-perfect_s=Object("best shield",10000,"will mitigate some damage",30000, "shield")
-mighty_skull = Object("skull", 15000, "a giant blob skull",100)
-talon = Object("talon", 1500, "a giant dragon talon",100)
-lint = Object("lint", 100, "a piece of lint",100)
+#############################################################################################################
+
+class itemlist:
+  def __init__(self,name,items=list()):
+    self.name=name
+    self.items=items
+  def __str__(self):
+    return str(self.name)
+
+############################################################################################################
+#world ITEMS
+
+crown = Object("crown", 15000, "a gold crown with many jewels",10,1)
+scepter =Object("King's scepter", 10000, "a silver sceptre",30,2)
+vorpel_sword=Object("vorpel sword", 200, "a strange looking sword",1000,3)
+bedpan=Object("bedpan", 3, "a smelly metal bowl",2,4)
+torch=Object("torch", 1, "fire attatched to a stick",78,5)
+shield=Object("shield",200,"will mitigate some damage",300,6)
+broken_shield=Object("broken shield",100,"will mitigate some damage",300,8, "shield")
+broken_weapon=Object("broken weapon",100,"will cause some damage",300,9, "weapon")
+perfect_w=Object("water tower",10000,"will mitigate some damage",30000,10, "weapon")
+perfect_s=Object("best shield",10000,"will mitigate some damage",30000,11, "shield")
+skull=Object("skull", 15000, "a giant blob skull",100,12)
+talon=Object("talon", 1500, "a giant dragon talon",100,13)
+lint=Object("lint", 100, "a piece of lint",100,14)
+
+
+
+
+
+##################################################################################################################    
+    
+    
+    
+    
+    
+############################################################################################################
+uncommon=itemlist("uncommon")
+#UNCOMMON ITEMS
+
+uncommon.items.append(Object("crown", 15000, "a gold crown with many jewels",10,1))
+uncommon.items.append(Object("King's scepter", 10000, "a silver scepter",30,2))
+uncommon.items.append(Object("vorpel sword", 200, "a strange looking sword",1000,3))
+uncommon.items.append(Object("bedpan", 3, "a smelly metal bowl",2,4))
+uncommon.items.append(Object("torch", 1, "fire attatched to a stick",78,5))
+uncommon.items.append(Object("shield",200,"will mitigate some damage",300,6))
+uncommon.items.append(Object("broken shield",100,"will mitigate some damage",300,8, "shield"))
+uncommon.items.append(Object("broken weapon",100,"will cause some damage",300,9, "weapon"))
+uncommon.items.append(Object("water tower",10000,"will mitigate some damage",30000,10, "weapon"))
+uncommon.items.append(Object("best shield",10000,"will mitigate some damage",30000,11, "shield"))
+uncommon.items.append(Object("skull", 15000, "a giant blob skull",100,12))
+uncommon.items.append(Object("talon", 1500, "a giant dragon talon",100,13))
+uncommon.items.append(Object("lint", 100, "a piece of lint",100,14))
+
+
 
 
 
 ##################################################################################################################
+
+
+#COMMON ITEMS
+
+common= itemlist("common")
+common.items.append(Object("scrap metal", 150, "a gold crown with many jewels",10,1))
+common.items.append(Object("dead mouse", 100, "a silver sceptre",30,2))
+common.items.append(Object("plate", 20, "a strange looking sword",1000,3))
+common.items.append(Object("juice box", 3, "a smelly metal bowl",2,4))
+common.items.append(Object("credit card", 1, "fire attached to a stick",78,5))
+common.items.append(Object("old movie",20,"will mitigate some damage",300,6))
+common.items.append(Object("paper shield",10,"will mitigate some damage",300,7, "shield"))
+common.items.append(Object("paper weapon",10,"will cause some damage",300,8, "weapon"))
+common.items.append(Object("skull", 15, "a giant blob skull",100,9))
+common.items.append(Object("talon", 15, "a giant dragon talon",100,10))
+common.items.append(Object("lint", 1, "a piece of lint",100,11))
+
+
+
+#############################################################################################################
+
 
 #This a player/your player called the user in the code  
 class player:
@@ -489,17 +566,16 @@ class monster:
 #Add monsters below
 
 blob=monster("blob",10000,"yellow","warrior" )
-blob.contents.append(shield)
 blob.damage=1000
-blob.contents.append(mighty_skull)
+loot_size_randomer(blob,common)
 
 dragon=monster("dragon",1000,"yellow","warrior" )
-dragon.contents.append(lint)
 dragon.damage=1000
-dragon.contents.append(talon)
+loot_size_randomer(dragon,common)
 
 high_wizard=monster("high wizard",random.randrange(10000000,20000000),"black","warrior")
 high_wizard.damage=random.randrange(10000000,20000000)
+loot_size_randomer(high_wizard,common)
 
 ######################################################################################################################
 
@@ -562,7 +638,7 @@ cave.x=12
 cave.y=9
 
 
-#############################################################################################################
+
 
 class floor:
   def __init__(self,name,rooms=list()):
