@@ -178,16 +178,18 @@ def look_command(holder):
       print(location.north)
     elif holder[1]== "around":
       room_contents_look(location)
-      if len(location.baddies)>0:
-        print(location.baddies[0].name)
-        print(location.baddies[0].health)
+      if location.baddies:
+        print(location.baddies.name)
+        print(location.baddies.health)
+        print(location.baddies.damage)
 
 def about_command(holder):
   if holder[0]=="about":
-    if len(location.baddies)>0:
-      if holder[1]==location.baddies[0].name:
-        print(location.baddies[0].name)
-        print(location.baddies[0].health)
+    if location.baddies:
+      if holder[1]==location.baddies.name:
+        print(location.baddies.name)
+        print(location.baddies.health)
+        print(location.baddies.damage)
     holder.remove("about")
     otherholder=' '.join(holder) 
     if otherholder in user.contents:
@@ -263,6 +265,34 @@ def help_command(holder):
         print(commandlist[otherholder])
     else:
       print(commandlist)
+      
+      
+def attack_command(holder):
+  if holder[0]=="attack":
+    holder.remove("attack")
+    otherholder=' '.join(holder)
+    neitherdead=0
+    if otherholder == location.baddies:
+      yourhealth=int(user.health) + int(user.shield.power)
+      yourdamage=int(user.weapon.power)
+      monsterdamage=int(location.baddies.damage)
+      monsterhealth=int(location.baddies.health)
+    while neitherdead==0:
+      monsterhealth=monsterhealth-yourdamage
+      print("you just attacked "+str(location.baddies.name))
+      if monsterhealth<1:
+        print("you have just killed "+str(location.baddies.name))
+        break
+      yourhealth=yourhealth-monsterdamage
+      print(str(location.baddies.name)+" just attacked you")
+      if yourhealth<1:
+        print("you have just been killed by "+str(location.baddies.name))
+        break
+      print(yourhealth)
+      print(monsterhealth)
+      
+    
+    
 def what_you_do(holder):
   global location
   if holder[0]=="go":
@@ -275,7 +305,7 @@ def what_you_do(holder):
   bag_command(holder)
   look_command(holder)
   about_command(holder)
-  
+  attack_command(holder)
 
 
 
@@ -289,7 +319,7 @@ class Room:
     self.south=south
     self.description=description
     self.contents=list()
-    self.baddies=list()
+    self.baddies=None
   def __str__(self):
     return str(self.name)
 
@@ -328,11 +358,12 @@ class monster:
     self.health=health
     self.color=color
     self.classs=classs
+    self.damage=10
     self.contents=list() 
   def __str__(self):
     return str(self.name)
-
-
+  def __eq__(self,other):
+    return self.name == other
 
 #these are the Objects in the dungeon
 
@@ -344,11 +375,14 @@ torch= Object("torch", 1, "fire attatched to a stick",78)
 shield=Object("shield",200,"will mitigate some damage",300)
 broken_shield=Object("broken shield",100,"will mitigate some damage",300, "shield")
 broken_weapon=Object("broken weapon",100,"will cause some damage",300, "weapon")
-
+perfect_w=Object("best weapon",10000,"will mitigate some damage",30000, "shield")
+perfect_s=Object("best shield",10000,"will mitigate some damage",30000, "shield")
 
 #these are the monsters in the dungeon
-blob=monster("blob",100,"yellow","warrior" )
+blob=monster("blob",1000000,"yellow","warrior" )
 blob.contents.append(shield)
+blob.damage=1
+
 
 
 commandlist = dict()
@@ -362,7 +396,7 @@ commandlist['drop']="type drop [item] to drop the item from you bag"
 commandlist['equip']="type equip [item] to equip whats in your bag"
 commandlist['unequip']="type unequip [item] to take off what you are wearing"
 commandlist['help']="type help [command] learn about command"
-
+commandlist['attack']="type attack [monster] to attack monster"
 print(commandlist)
 
 
@@ -389,7 +423,7 @@ lair=Room("lair")
 lair.description="just a long hallway"
 lair.contents.append(torch)
 lair.north=hallway
-lair.baddies.append(blob)
+lair.baddies=blob
 
 
 #this is your player
@@ -398,9 +432,10 @@ lair.baddies.append(blob)
 #initial(name)
 name="aubin"
 user=player(name,100,"male", "warrior")
+user.shield=perfect_s
+user.weapon=perfect_w
 
-
-location= bedroom
+location= lair
 
 holder=list
 while not response  == "dfhsergghj":
