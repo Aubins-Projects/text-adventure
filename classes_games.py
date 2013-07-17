@@ -11,7 +11,7 @@ you can add objects by just following the format. If it is a shield/weapon, make
 
 you can add monsters by following the format, just make sure you say where it is from by putting the [room].baddies
 
-you can add a room by adding the rooms in the function ####loc_finder####, just remember to add it in the location object area as well. It will link rooms for you, once you put in the rooms coordinates.
+you can add a room by adding the rooms to the room object and the floor object
 
 What i will be adding is another dictionary maybe? for you class choice. It will be a multiplier for your health/damage or
 both.
@@ -180,49 +180,23 @@ def coordinates(direction):
 
 
 ###########################################################################################
-#Add your room to these 2 functions, with its x and y coordinates
-# x is your east and west, y is your north and south
-#should just be a straing copy and paste into the other function...use an elif
-# as long as you have one number the same and the other is off by one, it will work for you
-# Make sure that you add this room to the room objects location
-#############################################################################################
+#This is the automatic mapper once you add the grids in the room OBJECT and the floor OBJECT
+
 
 def loc_finder(sav_x,sav_y):
   global x
   global y
   global location
-  if x == 10 and y==10 :
-     location = bedroom
-  elif x== 11 and y ==10:
-     location = hallway
-  elif x== 11 and y == 9:
-     location = lair
-  elif x== 11 and y == 8:
-     location = keep
-  else:
-     x=sav_x
-     y=sav_y
+  for room in level1.rooms:
+    if room.x==x and room.y==y:
+      location= room
   print(str(name)+", you are in the "+str(location))
 
 def map_finder(x,y):
-  if x == 10 and y==10 :
-     location = bedroom
-     return location
-  elif x== 11 and y ==10:
-     location = hallway
-     return location
-  elif x== 11 and y == 9:
-     location = lair
-     return location
-  elif x== 11 and y == 8:
-     location = keep
-     return location
-###############################################################################################################
+  for room in level1.rooms:
+    if room.x==x and room.y==y:
+      return room
 
-
-
-
-#This is the automatic mapper once you put in its grids
 def mapping():
   global x
   global y
@@ -243,7 +217,7 @@ def mapping():
   if not map_finder(temp_x,temp_y+1)==temp_location:
     location.north=map_finder(temp_x,temp_y+1)
   
-    
+###############################################################################################################    
 
 #look command function
 def look_command(holder):
@@ -515,6 +489,8 @@ class Room:
     self.description=description
     self.contents=list()
     self.baddies=None
+    self.x=0
+    self.y=0
   def __str__(self):
     return str(self.name)
 ############################################################################################################
@@ -529,28 +505,42 @@ bedroom.contents.append(vorpel_sword)
 bedroom.contents.append(bedpan)
 bedroom.contents.append(broken_shield)
 bedroom.contents.append(broken_weapon)
+bedroom.x=10
+bedroom.y=10
 
 hallway=Room("corridor")
 hallway.description="just a long hallway"
 hallway.contents.append(torch)
+hallway.x=11
+hallway.y=10
 
 lair=Room("lair")
 lair.description="just a long hallway"
 lair.contents.append(torch)
 lair.baddies=blob
+lair.x=11
+lair.y=9
 
 keep=Room("keep")
 keep.baddies=dragon
+keep.x=11
+keep.y=8
 
 #############################################################################################################
 
+class floor:
+  def __init__(self,name,rooms=list()):
+    self.name=name
+    self.rooms=rooms
+  def __str__(self):
+    return str(self.name)
 
-
-
-
-
-
-
+############################################################################################################
+level1= floor("ground level")
+level1.rooms.append(lair)
+level1.rooms.append(bedroom)
+level1.rooms.append(hallway)
+level1.rooms.append(keep)
 
 
 
