@@ -247,25 +247,33 @@ def bag_command(holder):
     print("a(n) "+str(user.weapon)+" as your weapon")
 
 def drop_command(holder):
-   if holder[0]=="drop":
+  if holder[0]=="drop":
     holder.remove("drop")
-    otherholder=' '.join(holder) 
+    otherholder=' '.join(holder)
     if otherholder in user.contents:
       location.contents.append(user.contents[user.contents.index(otherholder)])
       user.contents.remove(otherholder)
       print("you just dropped "+ otherholder + " in the " +str(location))
-
-
+def help_command(holder):
+  if holder[0]=="help":
+    if len(holder)>1:
+      holder.remove("help")
+      otherholder=' '.join(holder)
+      if otherholder in commandlist:
+        print(commandlist[otherholder])
+    else:
+      print(commandlist)
 def what_you_do(holder):
   global location
+  if holder[0]=="go":
+    coordinates(holder[1])
+  help_command(holder)
   unequip_command(holder)
   drop_command(holder)  
   equip_command(holder)
   grab_command(holder)
   bag_command(holder)
   look_command(holder)
-  if holder[0]=="go":
-      coordinates(holder[1])
   about_command(holder)
   
 
@@ -353,6 +361,7 @@ commandlist['bag']="type bag to see whats in your bag"
 commandlist['drop']="type drop [item] to drop the item from you bag"
 commandlist['equip']="type equip [item] to equip whats in your bag"
 commandlist['unequip']="type unequip [item] to take off what you are wearing"
+commandlist['help']="type help [command] learn about command"
 
 print(commandlist)
 
