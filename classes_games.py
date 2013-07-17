@@ -11,8 +11,7 @@ you can add objects by just following the format. If it is a shield/weapon, make
 
 you can add monsters by following the format, just make sure you say where it is from by putting the [room].baddies
 
-you can add a room by adding the rooms in the area, just remember to add it in the locations, you need to put in the 
-x, y coordinate for the room as well. 
+you can add a room by adding the rooms in the function ####loc_finder####, just remember to add it in the location object area as well. It will link rooms for you, once you put in the rooms coordinates.
 
 What i will be adding is another dictionary maybe? for you class choice. It will be a multiplier for your health/damage or
 both.
@@ -23,12 +22,10 @@ both.
 name=""
 points=0
 lives=3
-dead= 0
-j=3
 relive=1
-g=0
 contents={}
 response=""
+holder=list
 
 
 #This is what lets you put your name in and then checks your score
@@ -46,6 +43,8 @@ def namechecker():
     print("Welcome: "+name +"\n You are only allowed to look left, or right, and move forward. \n Good Luck! \n")
 
 
+
+#this is to initialize your character its commented out below for testing purposes
 def initial(name):
   answer1=input("What is your gender?\n")
   answer2=input("What is your class? \n")
@@ -77,11 +76,23 @@ def room_contents_look(what):
   for x in range(len(what.contents)):
     print(what.contents[i].name)
     i=1+i
-  print(str(what.east)+" is East")
-  print(str(what.north)+" is North")
-  print(str(what.west)+" is West")
-  print(str(what.south)+" is South")
-  print("************************** \n")
+  if what.east== None:
+    i=0
+  else:
+    print(str(what.east)+" is East")
+  if what.north== None:
+    i=0
+  else:
+    print(str(what.north)+" is North")
+  if what.west== None:
+    i=0
+  else:
+    print(str(what.west)+" is West")
+  if what.south== None:
+    i=0
+  else:
+    print(str(what.south)+" is South")
+    print("************************** \n")
 
 
 #This is the reassurance for trying to quit
@@ -146,6 +157,7 @@ def gen_death(how_they_died):
   return str(gen_death)
 
 
+#this is your starting coordinates
     
 x=10
 y=10
@@ -164,6 +176,21 @@ def coordinates(direction):
      y=y+1
   elif direction == "south":
      y=y-1
+  loc_finder(sav_x,sav_y)
+
+
+###########################################################################################
+#Add your room to these 2 functions, with its x and y coordinates
+# x is your east and west, y is your north and south
+#should just be a straing copy and paste into the other function...use an elif
+# as long as you have one number the same and the other is off by one, it will work for you
+# Make sure that you add this room to the room objects location
+#############################################################################################
+
+def loc_finder(sav_x,sav_y):
+  global x
+  global y
+  global location
   if x == 10 and y==10 :
      location = bedroom
   elif x== 11 and y ==10:
@@ -175,10 +202,48 @@ def coordinates(direction):
   else:
      x=sav_x
      y=sav_y
-##  print("this is your current X and Y "+str(x)+ ", "+str(y))
   print(str(name)+", you are in the "+str(location))
-#This lets you do your action using the first part of the command and then taking the second part and doing the action
 
+def map_finder(x,y):
+  if x == 10 and y==10 :
+     location = bedroom
+     return location
+  elif x== 11 and y ==10:
+     location = hallway
+     return location
+  elif x== 11 and y == 9:
+     location = lair
+     return location
+  elif x== 11 and y == 8:
+     location = keep
+     return location
+###############################################################################################################
+
+
+
+
+#This is the automatic mapper once you put in its grids
+def mapping():
+  global x
+  global y
+  global location
+  temp_location=location
+  temp_x=x
+  temp_y=y
+
+  if not map_finder(temp_x-1,temp_y)==temp_location:
+    location.west=map_finder(temp_x-1,temp_y)
+
+  if not map_finder(temp_x+1,temp_y)==temp_location:
+    location.east=map_finder(temp_x+1,temp_y)
+
+  if not map_finder(temp_x,temp_y-1)==temp_location:
+    location.south=map_finder(temp_x,temp_y-1)
+
+  if not map_finder(temp_x,temp_y+1)==temp_location:
+    location.north=map_finder(temp_x,temp_y+1)
+  
+    
 
 #look command function
 def look_command(holder):
@@ -194,17 +259,18 @@ def look_command(holder):
     elif holder[1]== "around":
       room_contents_look(location)
       if location.baddies:
-          print(location.baddies.name)
-          print(location.baddies.health)
-          print(location.baddies.damage)
+        print("Monster name: "+str(location.baddies.name))
+        print("Monster health: "+str(location.baddies.health))
+        print("Monster damage: "+str(location.baddies.damage))
+
 
 def about_command(holder):
   if holder[0]=="about":
     if location.baddies:
       if holder[1]==location.baddies.name:
-        print(location.baddies.name)
-        print(location.baddies.health)
-        print(location.baddies.damage)
+        print("Monster name: "+str(location.baddies.name))
+        print("Monster health: "+str(location.baddies.health))
+        print("Monster damage: "+str(location.baddies.damage))
     holder.remove("about")
     otherholder=' '.join(holder) 
     if otherholder in user.contents:
@@ -303,8 +369,8 @@ def attack_command(holder):
         print("you have found :")
         points=points+int(location.baddies.health)
         for item in location.baddies.contents:
-          print(item)
-          print(item.description)
+          print("a(n) "+str(item))
+          print("\tDescription: "+str(item.description)+"\n")
           user.contents.append(item)
           location.baddies=None
         break
@@ -322,7 +388,7 @@ def attack_command(holder):
       print(str(location.baddies.name)+"'s HP" +monsterhealth)
       
     
-    
+#This holds ALL the functions that you could run    
 def what_you_do(holder):
   global location
   if holder[0]=="go":
@@ -340,20 +406,7 @@ def what_you_do(holder):
     scorecheck()
 
 
-
-class Room:
-  def __init__(self,name,north="wall",east="wall",west="wall",south="wall",description=""):
-    self.name=name
-    self.north=north
-    self.east=east
-    self.west=west
-    self.south=south
-    self.description=description
-    self.contents=list()
-    self.baddies=None
-  def __str__(self):
-    return str(self.name)
-
+#Your items found in game
 class Object:
   def __init__(self, name, value, description, power, equip="item"):
     self.name=name
@@ -367,36 +420,8 @@ class Object:
 
   def __eq__(self,other):
     return self.name == other
-    
-  
-  
-class player:
-  def __init__(self,name,health,gender,classs):
-    self.name=name
-    self.health=health
-    self.gender=gender
-    self.classs=classs
-    self.contents=list() 
-    self.shield=""
-    self.weapon=""
-  def __str__(self):
-    return str(self.name)
-
-
-class monster:
-  def __init__(self,name,health,color,classs):
-    self.name=name
-    self.health=health
-    self.color=color
-    self.classs=classs
-    self.damage=10
-    self.contents=list() 
-  def __str__(self):
-    return str(self.name)
-  def __eq__(self,other):
-    return self.name == other
-
-#these are the Objects in the dungeon
+###################################################################################################################
+#Add items below
 
 crown = Object("crown", 15000, "a gold crown with many jewels",10)
 scepter = Object("King's scepter", 10000, "a silver scepter",30)
@@ -410,9 +435,62 @@ perfect_w=Object("water tower",10000,"will mitigate some damage",30000, "weapon"
 perfect_s=Object("best shield",10000,"will mitigate some damage",30000, "shield")
 mighty_skull = Object("skull", 15000, "a giant blob skull",100)
 talon = Object("talon", 1500, "a giant dragon talon",100)
-lint = Object("skull", 100, "a piece of lint",100)
+lint = Object("lint", 100, "a piece of lint",100)
 
-#these are the monsters in the dungeon
+
+
+##################################################################################################################
+
+#This a player/your player called the user in the code  
+class player:
+  def __init__(self,name,health,gender,classs):
+    self.name=name
+    self.health=health
+    self.gender=gender
+    self.classs=classs
+    self.contents=list() 
+    self.shield=""
+    self.weapon=""
+  def __str__(self):
+    return str(self.name)
+#####################################################################################################################
+#add players here
+#uncomment namechecker and initial
+#Delete everything under it....I had that there so I didnt have to type it in each time I tested
+
+
+
+#namechecker()
+#initial(name)
+
+#Delete below to make your own
+name="aubin"
+user=player(name,100,"male", "warrior")
+user.shield=perfect_s
+user.weapon=perfect_w
+
+
+
+#####################################################################################################################
+
+#These are the monsters in game
+class monster:
+  def __init__(self,name,health,color,classs):
+    self.name=name
+    self.health=health
+    self.color=color
+    self.classs=classs
+    self.damage=10
+    self.contents=list() 
+  def __str__(self):
+    return str(self.name)
+  def __eq__(self,other):
+    return self.name == other
+
+
+######################################################################################################################
+#Add monsters below
+
 blob=monster("blob",10000,"yellow","warrior" )
 blob.contents.append(shield)
 blob.damage=1000
@@ -423,7 +501,60 @@ dragon.contents.append(lint)
 dragon.damage=1000
 dragon.contents.append(talon)
 
+######################################################################################################################
 
+
+#Your room object
+class Room:
+  def __init__(self,name,north="wall",east="wall",west="wall",south="wall",description=""):
+    self.name=name
+    self.north=north
+    self.east=east
+    self.west=west
+    self.south=south
+    self.description=description
+    self.contents=list()
+    self.baddies=None
+  def __str__(self):
+    return str(self.name)
+############################################################################################################
+#Add rooms Below
+
+
+bedroom = Room("King\'s bedroom")
+bedroom.description="This is a room fit for a King"
+bedroom.contents.append(crown)
+bedroom.contents.append(scepter)
+bedroom.contents.append(vorpel_sword)
+bedroom.contents.append(bedpan)
+bedroom.contents.append(broken_shield)
+bedroom.contents.append(broken_weapon)
+
+hallway=Room("corridor")
+hallway.description="just a long hallway"
+hallway.contents.append(torch)
+
+lair=Room("lair")
+lair.description="just a long hallway"
+lair.contents.append(torch)
+lair.baddies=blob
+
+keep=Room("keep")
+keep.baddies=dragon
+
+#############################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+#These are all of the commands in the game
 commandlist = dict()
 
 commandlist['points']="type points to get your current points"
@@ -442,49 +573,12 @@ print(commandlist)
 
 
 
-
-bedroom = Room("King\'s bedroom")
-bedroom.description="This is a room fit for a King"
-bedroom.east= Room("corridor")
-bedroom.contents.append(crown)
-bedroom.contents.append(scepter)
-bedroom.contents.append(vorpel_sword)
-bedroom.contents.append(bedpan)
-bedroom.contents.append(broken_shield)
-bedroom.contents.append(broken_weapon)
-
-hallway=Room("corridor")
-hallway.description="just a long hallway"
-hallway.west=bedroom
-hallway.contents.append(torch)
-hallway.south=Room("lair")
-
-lair=Room("lair")
-lair.description="just a long hallway"
-lair.contents.append(torch)
-lair.north=hallway
-lair.baddies=blob
-lair.south=Room("keep")
-
-keep=Room("keep")
-keep.north=lair
-keep.baddies=dragon
-
-
-#this is your player
-
-#namechecker()
-#initial(name)
-name="aubin"
-user=player(name,100,"male", "warrior")
-user.shield=perfect_s
-user.weapon=perfect_w
-
+#Starting location:
 location= bedroom
-holder=list
 
-
-
+#This is really the only executed code for the whole game, its long because of the quitting functionality
+#You can only save your score if you quit properly
+#that means typing the word quit and then no
 
 while not response  == "dfhsergghj":
   response=input("Command: ")
@@ -492,9 +586,12 @@ while not response  == "dfhsergghj":
     ask_ok("You are about to quit, type no to quit")
     if relive==0:
       response="dfhsergghj"
-  holder=(response.split())
-  what_you_do(holder)
-
+  try:
+    holder=(response.split())
+    mapping()
+    what_you_do(holder)
+  except:
+    print("type an actual command please")
 
 
 
