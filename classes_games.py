@@ -2,9 +2,20 @@ import os.path
 import string
 import random
 '''
-things to add: attack, better print statements for the abouts, some more monsters, and money system, maybe a store.
+How you can make this your own game:
 
-i really want to start attacking things soon. so we need to have a health system.
+DO NOT MESS WITH THE FUNCTIONS other than location
+DO NOT MESS WITH THE CLASSES
+
+you can add objects by just following the format. If it is a shield/weapon, make sure you say so in the equip spot
+
+you can add monsters by following the format, just make sure you say where it is from by putting the [room].baddies
+
+you can add a room by adding the rooms in the area, just remember to add it in the locations, you need to put in the 
+x, y coordinate for the room as well. 
+
+What i will be adding is another dictionary maybe? for you class choice. It will be a multiplier for your health/damage or
+both.
 
 '''
 #these are the global variables for the system
@@ -164,8 +175,8 @@ def coordinates(direction):
   else:
      x=sav_x
      y=sav_y
-  print("this is your current X and Y "+str(x)+ ", "+str(y))
-
+##  print("this is your current X and Y "+str(x)+ ", "+str(y))
+  print(str(name)+", you are in the "+str(location))
 #This lets you do your action using the first part of the command and then taking the second part and doing the action
 
 
@@ -307,8 +318,8 @@ def attack_command(holder):
           break
         print("you only have: "+str(lives)+" lives/life left")
         break
-      print(yourhealth)
-      print(monsterhealth)
+      print("Your HP: "+str(yourhealth))
+      print(str(location.baddies.name)+"'s HP" +monsterhealth)
       
     
     
