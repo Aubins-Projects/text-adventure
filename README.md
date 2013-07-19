@@ -1,7 +1,7 @@
 text-adventure
 ==============
 
-text adventure game
+text adventure game for Python 3
 
 Basically this was a game for me to learn python. It is my first code I have written in python.
 As you can see from the first couple of code commits, I like to re-invent the wheel (note the 5 nested if statements)
