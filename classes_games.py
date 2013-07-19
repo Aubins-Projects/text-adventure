@@ -196,13 +196,13 @@ def coordinates(direction):
   global location
   sav_x=x
   sav_y=y
-  if direction == "east":
+  if direction in ["east" , "e"]:
      x=x+1
-  elif direction == "west":
+  elif direction in ["west" , "w"]:
      x=x-1
-  elif direction == "north":
+  elif direction in ["north" , "n"]:
      y=y+1
-  elif direction == "south":
+  elif direction in ["south" , "s"]:
      y=y-1
   loc_finder(sav_x,sav_y)
 
@@ -254,16 +254,16 @@ def mapping():
 
 #look command function
 def look_command(holder):
-  if holder[0]=="look":
-    if holder[1] == "east":
+  if holder[0] in ["look", "l"]:
+    if holder[1] in ["east","e"]:
       print(location.east)
-    elif holder[1] == "west":
+    elif holder[1] in ["west", "w"]:
       print(location.west)
-    elif holder[1] == "south":
+    elif holder[1] in ["south","s"]:
       print(location.south)
-    elif holder[1] == "north":
+    elif holder[1] in ["north", "n"]:
       print(location.north)
-    elif holder[1]== "around":
+    elif holder[1]in ["around", "a"]:
       room_contents_look(location)
       if location.baddies:
         print("Monster name: "+str(location.baddies.name))
@@ -297,8 +297,9 @@ def grab_command(holder):
       print(user.contents[user.contents.index(otherholder)].description)
 
 def equip_command(holder):
-  if holder[0]=="equip":
-    holder.remove("equip")
+  if holder[0]in ["equip","e"]:
+    temp_word_holder=str(holder[0])
+    holder.remove(temp_word_holder)
     otherholder=' '.join(holder)     
     if otherholder in user.contents:
       if user.contents[user.contents.index(otherholder)].equip == "shield":
@@ -311,8 +312,9 @@ def equip_command(holder):
         print("you just equipped a(n) "+str(otherholder)+" which "+str(user.shield.description))
 
 def unequip_command(holder):
-  if holder[0]=="unequip":
-    holder.remove("unequip")
+  if holder[0] in ["unequip", "un"]:
+    temp_word_holder=str(holder[0])
+    holder.remove(temp_word_holder)
     otherholder=' '.join(holder)     
     if otherholder == user.weapon:
         user.contents.append(user.weapon)
@@ -337,13 +339,33 @@ def bag_command(holder):
     print("a(n) "+str(user.weapon)+" as your weapon")
 
 def drop_command(holder):
-  if holder[0]=="drop":
-    holder.remove("drop")
+  if holder[0]in ["drop","d"]:
+    temp_word_holder=str(holder[0])
+    holder.remove(temp_word_holder)
     otherholder=' '.join(holder)
     if otherholder in user.contents:
       location.contents.append(user.contents[user.contents.index(otherholder)])
       user.contents.remove(otherholder)
       print("you just dropped "+ otherholder + " in the " +str(location))
+
+def use_command(holder):
+  if holder[0]in ["use","u"]:
+    temp_word_holder=str(holder[0])
+    holder.remove(temp_word_holder)
+    otherholder=' '.join(holder)
+    if (otherholder in user.contents):
+      if (user.contents[user.contents.index(otherholder)].usable=="yes"):
+        location.used.append(user.contents[user.contents.index(otherholder)])
+        print("you just used "+ otherholder + " in the " +str(location))
+        cause_and_effect(otherholder)
+      else:
+        print(str(user.contents[user.contents.index(otherholder)])+" is not usable here.")
+
+def cause_and_effect(otherholder):
+  print(location.usables[location.usables.index(otherholder)].effect)
+
+
+
 def help_command(holder):
   if holder[0]=="help":
     if len(holder)>1:
@@ -403,7 +425,7 @@ def what_you_do(holder):
   global location
   if holder[0]=="go":
     coordinates(holder[1])
-  help_command(holder)
+  use_command(holder)
   unequip_command(holder)
   drop_command(holder)  
   equip_command(holder)
@@ -411,6 +433,7 @@ def what_you_do(holder):
   bag_command(holder)
   look_command(holder)
   about_command(holder)
+  help_command(holder)
   attack_command(holder)
   if holder[0]=="points":
     scorecheck()
@@ -418,13 +441,14 @@ def what_you_do(holder):
 
 #Your items found in game
 class Object:
-  def __init__(self, name, value, description, power,uid, equip="item"):
+  def __init__(self, name, value, description, power,uid, equip="item",usable="no"):
     self.name=name
     self.value=value
     self.description=description
     self.power=power
     self.equip=equip
     self.uid=int(uid)
+    self.usable=usable
 
   def __str__(self):
     return str(self.name)
@@ -446,6 +470,7 @@ class itemlist:
 #world ITEMS
 
 crown = Object("crown", 15000, "a gold crown with many jewels",10,1)
+crown.usable="yes"
 scepter =Object("King's scepter", 10000, "a silver sceptre",30,2)
 vorpel_sword=Object("vorpel sword", 200, "a strange looking sword",1000,3)
 bedpan=Object("bedpan", 3, "a smelly metal bowl",2,4)
@@ -529,15 +554,12 @@ class player:
 #####################################################################################################################
 #add players here
 #uncomment namechecker and initial
-#Delete everything under it....I had that there so I didnt have to type it in each time I tested
+
 
 
 
 namechecker()
 initial(name)
-
-#Delete below to make your own
-#name="aubin"
 
 
 
@@ -555,7 +577,8 @@ class monster:
     self.color=color
     self.classs=classs
     self.damage=10
-    self.contents=list() 
+    self.contents=list()
+    self.keys="" 
   def __str__(self):
     return str(self.name)
   def __eq__(self,other):
@@ -579,6 +602,27 @@ loot_size_randomer(high_wizard,common)
 
 ######################################################################################################################
 
+class cause_n_effect:
+  def __init__(self,name,effect):
+    self.name=name
+    self.effect=effect
+  def __str__(self):
+    return str(self.name)
+  def __eq__(self,other):
+    return self.name == other
+
+
+#the name part is your trigger, so in this case it is the crown, if you use the crown in the bedroom you will see this effect
+crown_explosion= cause_n_effect("crown", "you dawn the crown of a dead king!\n The walls begin to BLEEEEDDDDDDD! Why would you do such a thing!")
+
+
+
+
+
+
+
+
+
 
 #Your room object
 class Room:
@@ -591,6 +635,8 @@ class Room:
     self.description=description
     self.contents=list()
     self.baddies=None
+    self.used=list()
+    self.usables=list()
     self.x=0
     self.y=0
   def __str__(self):
@@ -607,6 +653,7 @@ bedroom.contents.append(vorpel_sword)
 bedroom.contents.append(bedpan)
 bedroom.contents.append(broken_shield)
 bedroom.contents.append(broken_weapon)
+bedroom.usables.append(crown_explosion)
 bedroom.x=10
 bedroom.y=10
 
