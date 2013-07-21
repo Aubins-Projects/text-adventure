@@ -372,10 +372,12 @@ def help_command(holder):
       holder.remove("help")
       otherholder=' '.join(holder)
       if otherholder in commandlist:
-        print(commandlist[otherholder])
-    else:
-      print(commandlist)
-      
+        for command, description in commandlist[otherholder]:
+          print(command + "\t - \t" + description)
+    else: 
+      for command, description in commandlist.items():
+        print(command + "\t - \t" + description)
+
       
 def attack_command(holder):
   global response
