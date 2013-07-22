@@ -719,6 +719,7 @@ commandlist['equip']="type equip [item] to equip whats in your bag"
 commandlist['unequip']="type unequip [item] to take off what you are wearing"
 commandlist['help']="type help [command] learn about command"
 commandlist['attack']="type attack [monster] to attack monster"
+commandlist['grab']="type grab [item] to take an item and place it in your bag"
 
 print("\ntype help for a list of all commands\n")
 
