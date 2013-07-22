@@ -34,7 +34,7 @@ damagemultiplier=1
 #This is what lets you put your name in and then checks your score
 def namechecker():
   global name
-  name=input("Enter your name please \n")
+  name=raw_input("Enter your name please \n")
   if name in ('Aubin','aubin'):
     print("Welcome your highness")
   elif name in ('K','k', 'carolina', 'Carolina'):
@@ -50,9 +50,9 @@ def namechecker():
 #this is to initialize your character its commented out below for testing purposes
 def initial(name):
   global user
-  answer2=input("What is your class (warrior or fighter)? \n")
+  answer2=raw_input("What is your class (warrior or fighter)? \n")
   while not answer2 in ("warrior","fighter"):
-      answer2=input("What is your class (warrior or fighter)? \n")
+      answer2=raw_input("What is your class (warrior or fighter)? \n")
   answer3=100
   user=player(name,answer3,answer2)
   print("\n")
@@ -115,7 +115,7 @@ def room_contents_look(what):
 def ask_ok(prompt, retries=4, complaint='Yes or no, please!'):
   while True:
     global relive
-    ok = input( prompt + '\n')
+    ok = raw_input( prompt + '\n')
     if ok in ('y', 'ye', 'yes'):
       print("you are alive once more!")
       relive=1
@@ -135,7 +135,7 @@ def ask_ok(prompt, retries=4, complaint='Yes or no, please!'):
 
 #This is part of the reassurance from above
 def infunc(what_you_want_asked):
-  tobeused=input(what_you_want_asked)
+  tobeused=raw_input(what_you_want_asked)
   if not ask_ok(tobeused):
 #    print("it was false")
     return False
@@ -714,6 +714,7 @@ commandlist['look']="type look and then a cardinal direction, or around to look 
 commandlist['quit']="type quit and then follow the directions to quit"
 commandlist['about']="type about [item] and then what object you want to learn about"
 commandlist['bag']="type bag to see whats in your bag"
+commandlist['grab']="type grab [item] to place an item from your location to your bag"
 commandlist['drop']="type drop [item] to drop the item from you bag"
 commandlist['equip']="type equip [item] to equip whats in your bag"
 commandlist['unequip']="type unequip [item] to take off what you are wearing"
@@ -736,7 +737,7 @@ user.weapon=perfect_w
 #that means typing the word quit and then no
 
 while not response  == "dfhsergghj":
-  response=input("\nCommand: ")
+  response=raw_input("\nCommand: ")
   if response == "quit":
     ask_ok("You are about to quit, type no to quit")
     if relive==0:
@@ -747,7 +748,6 @@ while not response  == "dfhsergghj":
     what_you_do(holder)
   except:
     print("type a command please")
-
 
 
 
