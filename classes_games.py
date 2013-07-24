@@ -50,15 +50,18 @@ def namechecker():
 #this is to initialize your character its commented out below for testing purposes
 def initial(name):
   global user
-  answer2=input("What is your class (warrior or fighter)? \n")
-  while not answer2 in ("warrior","fighter"):
-      answer2=input("What is your class (warrior or fighter)? \n")
+  # This while/break solution needs the question only once  instead of twice.
+  while True:
+    answer2=input("What is your class (warrior or fighter)? \n")
+    if answer2 in ("warrior","fighter"):
+      break
   answer3=100
   user=player(name,answer3,answer2)
   print("\n")
   print("Your name: "+str(user.name))
   print("Your class: "+str(user.classs))
   #class now matters
+  # yes, but it doesn't change anything ... it's printed out, but damage and health stay the same ...? Is there a reason that you alter player's attributes not before fight itself? Should player  be able to change class at a later point?
   class_adaption(user.classs)
   print("Your health: "+str(int(user.health)*healthmultiplier))
   print("Your damage: "+str(int(user.damage)*damagemultiplier))
@@ -72,10 +75,6 @@ def class_adaption(classs):
   if classs=="fighter":
     healthmultiplier=1
     damagemultiplier=2
-
-
-
-
 
 
 #This is for looking specifically at one thing
